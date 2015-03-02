@@ -1,0 +1,41 @@
+#! /usr/bin/python
+'''
+ *  $Id: JobOpt_RawSignal_fromRoot, 2015-03-02 21:15:38 DAMPE $
+ *  Author(s):
+ *    Chi WANG (chiwang@mail.ustc.edu.cn) 11/03/2014
+#-------------------------------------------------------------------
+    NOTE:   input data is scientific root data(after Hex2Root)
+'''
+
+#-------------------------------------------------------------------
+import os
+import DMPSW                    # Load DAMPE software
+import libDmpRec0_RawSignal as DmpRec0
+
+#-------------------------------------------------------------------
+# Global setting
+#DMPSW.Core.SetEventNumber(40)     # default: -1
+#DMPSW.Core.SetStartTime("2014-11-17 13:37:20")     # default: 2013-01-01 00:00:00
+#DMPSW.Core.SetStopTime("2014-11-17 13:39:30")      # default: 2053-01-01 00:00:00
+#DMPSW.Core.LogLevel("Debug")      # Value = {Error | Warning | Info | Debug}. default: Info.
+#DMPSW.Core.LogHeader("On") # default: off
+
+#-------------------------------------------------------------------
+# RootIOSvc options
+#DMPSW.RootIOSvc.InputPath(os.environ["DMPSWWORK"]+"/data/sci")
+DMPSW.RootIOSvc.SetInputFile("./DmpRdcData.root")
+#DMPSW.RootIOSvc.OutputFile("./DmpCalBgoMip.root")
+DMPSW.RootIOSvc.SetWriteList("Event/Rec0")  # split by ;
+#DMPSW.RootIOSvc.OutputPath(os.environ["DMPSWWORK"]+"/run/data/cal/ped")
+
+#-------------------------------------------------------------------
+# Creat user's service or algorithm
+Rec0 = DmpRec0.DmpAlgRec0_RawSignal()
+DMPSW.AlgMgr.Append(Rec0)
+
+#-------------------------------------------------------------------
+# Run job
+DMPSW.Core.Initialize()
+DMPSW.Core.Run()
+DMPSW.Core.Finalize()
+
