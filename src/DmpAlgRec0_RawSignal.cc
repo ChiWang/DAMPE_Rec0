@@ -18,7 +18,7 @@
 
 //-------------------------------------------------------------------
 DmpAlgRec0_RawSignal::DmpAlgRec0_RawSignal()
- :DmpVAlg("Reco/SubstractPed"),
+ :DmpVAlg("Rec/Rec0/RawSignal"),
   fEvtHeader(0),
   fBgoRaw(0),
   fPsdRaw(0),
@@ -42,24 +42,21 @@ DmpAlgRec0_RawSignal::DmpAlgRec0_RawSignal()
 DmpAlgRec0_RawSignal::~DmpAlgRec0_RawSignal(){
 }
 
-void DmpAlgRec0_RawSignal::SetPedestalFile_Bgo(std::string f)
+void DmpAlgRec0_RawSignal::SetPedestalFile(std::string Id,std::string f)
 {
-  gRootIOSvc->JobOption()->SetOption(this->Name()+"/BgoPedestal",f);
-}
-
-void DmpAlgRec0_RawSignal::SetPedestalFile_Psd(std::string f)
-{
-  gRootIOSvc->JobOption()->SetOption(this->Name()+"/PsdPedestal",f);
-}
-
-void DmpAlgRec0_RawSignal::SetPedestalFile_Stk(std::string f)
-{
-  gRootIOSvc->JobOption()->SetOption(this->Name()+"/StkPedestal",f);
-}
-
-void DmpAlgRec0_RawSignal::SetPedestalFile_Nud(std::string f)
-{
-  gRootIOSvc->JobOption()->SetOption(this->Name()+"/NudPedestal",f);
+        if(f != ".ped"){
+                DmpLogWarning<<f<<"("<<Id<<") is not a pedestal file... will use the defaur one"<<DmpLogEndl;
+                return;
+        }
+  if(Id == "Bgo" || Id == "BGO"){
+    gRootIOSvc->JobOption()->SetOption(this->Name()+"/BgoPedestal",f);
+  }else if(Id == "Psd" || Id == "PSD"){
+    gRootIOSvc->JobOption()->SetOption(this->Name()+"/PsdPedestal",f);
+  }else if(Id == "Nud" || Id == "Nud"){
+    gRootIOSvc->JobOption()->SetOption(this->Name()+"/NudPedestal",f);
+  }else if(Id == "Stk" || Id == "Stk"){
+    gRootIOSvc->JobOption()->SetOption(this->Name()+"/StkPedestal",f);
+  }
 }
 
 //-------------------------------------------------------------------

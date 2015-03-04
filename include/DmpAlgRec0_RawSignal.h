@@ -24,10 +24,7 @@ public:
   DmpAlgRec0_RawSignal();
   ~DmpAlgRec0_RawSignal();
 
-  void SetPedestalFile_Bgo(std::string filename);
-  void SetPedestalFile_Psd(std::string filename);
-  void SetPedestalFile_Stk(std::string filename);
-  void SetPedestalFile_Nud(std::string filename);
+  void SetPedestalFile(std::string detectorID,std::string filename);
   bool Initialize();
   bool ProcessThisEvent();
   bool Finalize();
