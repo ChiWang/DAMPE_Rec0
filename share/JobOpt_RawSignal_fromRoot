@@ -23,7 +23,8 @@ import libDmpRec0_RawSignal as DmpRec0
 #-------------------------------------------------------------------
 # RootIOSvc options
 #DMPSW.RootIOSvc.InputPath(os.environ["DMPSWWORK"]+"/data/sci")
-inputFileName = "./A2Data00_20141118_163049.root"
+inputFileName = "./A2Data00_20141118_175216.root"
+#inputFileName = "./A2Data00_20141118_163049.root"
 DMPSW.RootIOSvc.SetInputFile(inputFileName)
 #DMPSW.RootIOSvc.OutputFile("./DmpCalBgoMip.root")
 DMPSW.RootIOSvc.SetWriteList("Event/Rec0")  # split by ;

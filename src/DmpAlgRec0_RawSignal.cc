@@ -44,7 +44,8 @@ DmpAlgRec0_RawSignal::~DmpAlgRec0_RawSignal(){
 
 void DmpAlgRec0_RawSignal::SetPedestalFile(std::string Id,std::string f)
 {
-        if(f != ".ped"){
+        TString xx = f;
+        if(not xx.Contains(".ped")){
                 DmpLogWarning<<f<<"("<<Id<<") is not a pedestal file... will use the defaur one"<<DmpLogEndl;
                 return;
         }
