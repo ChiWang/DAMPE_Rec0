@@ -18,7 +18,7 @@
 
 //-------------------------------------------------------------------
 DmpAlgRec0_RawSignal::DmpAlgRec0_RawSignal()
- :DmpVAlg("Rec0/RawSignal"),
+ :DmpVAlg("DmpAlgRec0_RawSignal"),
   fEvtHeader(0),
   fBgoRaw(0),
   fPsdRaw(0),
