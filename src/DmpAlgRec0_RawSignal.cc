@@ -18,7 +18,7 @@
 
 //-------------------------------------------------------------------
 DmpAlgRec0_RawSignal::DmpAlgRec0_RawSignal()
- :DmpVAlg("Rec/Rec0/RawSignal"),
+ :DmpVAlg("Rec0/RawSignal"),
   fEvtHeader(0),
   fBgoRaw(0),
   fPsdRaw(0),
@@ -30,12 +30,12 @@ DmpAlgRec0_RawSignal::DmpAlgRec0_RawSignal()
   fEvtNud(0),
   fEvtStk(0)
 {
-  gRootIOSvc->SetOutputKey("RawSignal");
+  gRootIOSvc->SetOutFileKey("RawSignal");
   std::string root_path = (std::string)getenv("DMPSWSYS")+"/share/Calibration";
-  gRootIOSvc->JobOption()->SetOption(this->Name()+"/BgoPedestal",root_path+"/Bgo.ped");
-  gRootIOSvc->JobOption()->SetOption(this->Name()+"/PsdPedestal",root_path+"/Psd.ped");
-  gRootIOSvc->JobOption()->SetOption(this->Name()+"/StkPedestal",root_path+"/Stk.ped");
-  gRootIOSvc->JobOption()->SetOption(this->Name()+"/NudPedestal",root_path+"/Nud.ped");
+  gCore->GetJobOption()->SetOption(this->Name()+"/BgoPedestal",root_path+"/Bgo.ped");
+  gCore->GetJobOption()->SetOption(this->Name()+"/PsdPedestal",root_path+"/Psd.ped");
+  gCore->GetJobOption()->SetOption(this->Name()+"/StkPedestal",root_path+"/Stk.ped");
+  gCore->GetJobOption()->SetOption(this->Name()+"/NudPedestal",root_path+"/Nud.ped");
 }
 
 //-------------------------------------------------------------------
@@ -50,13 +50,13 @@ void DmpAlgRec0_RawSignal::SetPedestalFile(std::string Id,std::string f)
                 return;
         }
   if(Id == "Bgo" || Id == "BGO"){
-    gRootIOSvc->JobOption()->SetOption(this->Name()+"/BgoPedestal",f);
+    gCore->GetJobOption()->SetOption(this->Name()+"/BgoPedestal",f);
   }else if(Id == "Psd" || Id == "PSD"){
-    gRootIOSvc->JobOption()->SetOption(this->Name()+"/PsdPedestal",f);
+    gCore->GetJobOption()->SetOption(this->Name()+"/PsdPedestal",f);
   }else if(Id == "Nud" || Id == "Nud"){
-    gRootIOSvc->JobOption()->SetOption(this->Name()+"/NudPedestal",f);
+    gCore->GetJobOption()->SetOption(this->Name()+"/NudPedestal",f);
   }else if(Id == "Stk" || Id == "Stk"){
-    gRootIOSvc->JobOption()->SetOption(this->Name()+"/StkPedestal",f);
+    gCore->GetJobOption()->SetOption(this->Name()+"/StkPedestal",f);
   }
 }
 
@@ -93,37 +93,37 @@ bool DmpAlgRec0_RawSignal::Initialize(){
   fEvtNud= new DmpEvtNudRaw();
   gDataBuffer->RegisterObject(path0+"/Nud",fEvtNud);
   std::string t0,t1;
-  std::string inputFile = gRootIOSvc->JobOption()->GetValue(this->Name()+"/BgoPedestal");
+  std::string inputFile = gCore->GetJobOption()->GetValue(this->Name()+"/BgoPedestal");
   bool loadPed = DAMPE::Bgo::LoadPedestal(inputFile,fBgoPed,t0,t1);
   if(not loadPed){
           return false;
   }else{
-    gRootIOSvc->JobOption()->SetOption(this->Name()+"/BgoPedestal/t0",t0);
-    gRootIOSvc->JobOption()->SetOption(this->Name()+"/BgoPedestal/t1",t1);
+    gCore->GetJobOption()->SetOption(this->Name()+"/BgoPedestal/t0",t0);
+    gCore->GetJobOption()->SetOption(this->Name()+"/BgoPedestal/t1",t1);
   }
-  inputFile = gRootIOSvc->JobOption()->GetValue(this->Name()+"/PsdPedestal");
+  inputFile = gCore->GetJobOption()->GetValue(this->Name()+"/PsdPedestal");
   loadPed = DAMPE::Psd::LoadPedestal(inputFile,fPsdPed,t0,t1);
   if(not loadPed){
           return false;
   }else{
-    gRootIOSvc->JobOption()->SetOption(this->Name()+"/PsdPedestal/t0",t0);
-    gRootIOSvc->JobOption()->SetOption(this->Name()+"/PsdPedestal/t1",t1);
+    gCore->GetJobOption()->SetOption(this->Name()+"/PsdPedestal/t0",t0);
+    gCore->GetJobOption()->SetOption(this->Name()+"/PsdPedestal/t1",t1);
   }
-  inputFile = gRootIOSvc->JobOption()->GetValue(this->Name()+"/StkPedestal");
+  inputFile = gCore->GetJobOption()->GetValue(this->Name()+"/StkPedestal");
   loadPed = DAMPE::Stk::LoadPedestal(inputFile,fStkPed,t0,t1);
   if(not loadPed){
           return false;
   }else{
-    gRootIOSvc->JobOption()->SetOption(this->Name()+"/StkPedestal/t0",t0);
-    gRootIOSvc->JobOption()->SetOption(this->Name()+"/StkPedestal/t1",t1);
+    gCore->GetJobOption()->SetOption(this->Name()+"/StkPedestal/t0",t0);
+    gCore->GetJobOption()->SetOption(this->Name()+"/StkPedestal/t1",t1);
   }
-  inputFile = gRootIOSvc->JobOption()->GetValue(this->Name()+"/NudPedestal");
+  inputFile = gCore->GetJobOption()->GetValue(this->Name()+"/NudPedestal");
   loadPed = DAMPE::Nud::LoadPedestal(inputFile,fNudPed,t0,t1);
   if(not loadPed){
           return false;
   }else{
-    gRootIOSvc->JobOption()->SetOption(this->Name()+"/NudPedestal/t0",t0);
-    gRootIOSvc->JobOption()->SetOption(this->Name()+"/NudPedestal/t1",t1);
+    gCore->GetJobOption()->SetOption(this->Name()+"/NudPedestal/t0",t0);
+    gCore->GetJobOption()->SetOption(this->Name()+"/NudPedestal/t1",t1);
   }
   return true;
 }

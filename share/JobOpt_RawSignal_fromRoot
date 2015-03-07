@@ -1,6 +1,6 @@
 #! /usr/bin/python
 '''
- *  $Id: JobOpt_RawSignal_fromRoot, 2015-03-02 21:15:38 DAMPE $
+ *  $Id: JobOpt_RawSignal_fromRoot, 2015-03-07 17:55:33 DAMPE $
  *  Author(s):
  *    Chi WANG (chiwang@mail.ustc.edu.cn) 11/03/2014
 #-------------------------------------------------------------------
@@ -23,7 +23,7 @@ import libDmpRec0_RawSignal as DmpRec0
 #-------------------------------------------------------------------
 # RootIOSvc options
 #DMPSW.RootIOSvc.InputPath(os.environ["DMPSWWORK"]+"/data/sci")
-inputFileName = "./A2Data00_20141118_175216.root"
+inputFileName = "./A2Data00_20141118_214521.root"
 #inputFileName = "./A2Data00_20141118_163049.root"
 DMPSW.RootIOSvc.SetInputFile(inputFileName)
 #DMPSW.RootIOSvc.OutputFile("./DmpCalBgoMip.root")
