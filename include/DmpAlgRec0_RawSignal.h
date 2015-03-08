@@ -11,7 +11,6 @@
 #include "DmpEvtPsdRaw.h"
 
 #include "DmpVAlg.h"
-class DmpEvtHeader;
 class DmpEvtStkRaw;
 class DmpEvtNudRaw;
 
@@ -33,14 +32,12 @@ private:
   bool SubPed_Stk();
 
 private:    // input
-  DmpEvtHeader          *fEvtHeader;
   DmpEvtBgoRaw          *fBgoRaw;
   DmpEvtPsdRaw          *fPsdRaw;
   DmpEvtNudRaw          *fNudRaw;
   DmpEvtStkRaw          *fStkRaw;
 
 private:    // output
-  DmpEvtHeader          *fHeader;
   DmpEvtBgoRaw          *fEvtBgo;
   DmpEvtPsdRaw          *fEvtPsd;
   DmpEvtNudRaw          *fEvtNud;

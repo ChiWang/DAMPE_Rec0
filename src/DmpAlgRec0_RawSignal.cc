@@ -9,7 +9,6 @@
 #include <boost/lexical_cast.hpp>
 //#include <fstream>
 
-#include "DmpEvtHeader.h"
 #include "DmpEvtBgoRaw.h"
 #include "DmpEvtNudRaw.h"
 #include "DmpDataBuffer.h"
@@ -19,12 +18,10 @@
 //-------------------------------------------------------------------
 DmpAlgRec0_RawSignal::DmpAlgRec0_RawSignal()
  :DmpVAlg("DmpAlgRec0_RawSignal"),
-  fEvtHeader(0),
   fBgoRaw(0),
   fPsdRaw(0),
   fNudRaw(0),
   fStkRaw(0),
-  fHeader(0),
   fEvtBgo(0),
   fEvtPsd(0),
   fEvtNud(0),
@@ -63,11 +60,6 @@ void DmpAlgRec0_RawSignal::SetPedestalFile(std::string Id,std::string f)
 //-------------------------------------------------------------------
 bool DmpAlgRec0_RawSignal::Initialize(){
   // read input data
-  fEvtHeader = dynamic_cast<DmpEvtHeader*>(gDataBuffer->ReadObject("Event/Rdc/EventHeader"));
-  if(0 == fEvtHeader){
-    fEvtHeader = new DmpEvtHeader();
-    gDataBuffer->LinkRootFile("Event/Rdc/EventHeader",fEvtHeader);
-  }
   fBgoRaw = dynamic_cast<DmpEvtBgoRaw*>(gDataBuffer->ReadObject("Event/Rdc/Bgo"));
   if(0 == fBgoRaw){
     fBgoRaw = new DmpEvtBgoRaw();
@@ -84,8 +76,6 @@ bool DmpAlgRec0_RawSignal::Initialize(){
     gDataBuffer->LinkRootFile("Event/Rdc/Nud",fNudRaw);
   }
   std::string path0 = "Event/Rec0";
-  fHeader = new DmpEvtHeader();
-  gDataBuffer->RegisterObject(path0+"/EventHeader",fHeader);
   fEvtBgo = new DmpEvtBgoRaw();
   gDataBuffer->RegisterObject(path0+"/Bgo",fEvtBgo);
   fEvtPsd = new DmpEvtPsdRaw();
@@ -135,7 +125,6 @@ return true;
 
 //-------------------------------------------------------------------
 bool DmpAlgRec0_RawSignal::ProcessThisEvent(){
-  fHeader->LoadFrom(fEvtHeader);
   fEvtBgo->LoadFrom(fBgoRaw);
   for(std::vector<double>::iterator it = fEvtBgo->fADC.begin(); it != fEvtBgo->fADC.end();){
     int index = it - fEvtBgo->fADC.begin();
