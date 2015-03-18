@@ -31,12 +31,6 @@ public:
 private:
   bool SubPed_Stk();
 
-private:    // input
-  DmpEvtBgoRaw          *fBgoRaw;
-  DmpEvtPsdRaw          *fPsdRaw;
-  DmpEvtNudRaw          *fNudRaw;
-  DmpEvtStkRaw          *fStkRaw;
-
 private:    // output
   DmpEvtBgoRaw          *fEvtBgo;
   DmpEvtPsdRaw          *fEvtPsd;

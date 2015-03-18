@@ -16,7 +16,7 @@ import libDmpRec0_RawSignal as DmpRec0
 
 #-------------------------------------------------------------------
 # Global setting
-#DMPSW.Core.SetEventNumber(4000)     # default: -1
+#DMPSW.Core.SetEventNumber(40)     # default: -1
 #DMPSW.Core.StartTime("2013-01-01 00:00:00")     # default: 2013-01-01 00:00:00
 #DMPSW.Core.StopTime("2016-01-01 00:00:00")      # default: 2053-01-01 00:00:00
 #DMPSW.Core.LogLevel("Debug")      # Value = {Error | Warning | Info | Debug}. default: Info.
@@ -30,7 +30,7 @@ import libDmpRec0_RawSignal as DmpRec0
 inputFileName = "./A2Data00_20141118_214521.frd"
 DMPSW.RootIOSvc.SetInputFile(inputFileName)
 #DMPSW.RootIOSvc.OutputPath(DMPSW.WorkPath+"/run/data/cal/ped")
-DMPSW.RootIOSvc.SetWriteList("Event/Rdc;Event/Rec0")  # split by ;
+DMPSW.RootIOSvc.SetWriteList("Event/Rec0")  # split by ;
 
 #-------------------------------------------------------------------
 # Creat user's service or algorithm
