@@ -122,38 +122,28 @@ return true;
 
 //-------------------------------------------------------------------
 bool DmpAlgRec0_RawSignal::ProcessThisEvent(){
-  for(std::vector<double>::iterator it = fEvtBgo->fADC.begin(); it != fEvtBgo->fADC.end();){
-    int index = it - fEvtBgo->fADC.begin();
-    short gid = fEvtBgo->fGlobalDynodeID.at(index);
-    fEvtBgo->fADC[index] -= fBgoPed.at(gid).at(0);
-    if(fEvtBgo->fADC[index] < 3*fBgoPed.at(gid).at(1)){
-      it = fEvtBgo->fADC.erase(it);
-      fEvtBgo->fGlobalDynodeID.erase(fEvtBgo->fGlobalDynodeID.begin() + index);
-    }else{
-      ++it;
+  std::vector<short>   eraseIDs;
+  for(std::map<short,double>::iterator it=fEvtBgo->fADC.begin();it != fEvtBgo->fADC.end();++it){
+    it->second -= fBgoPed.at(it->first).at(0);
+    if(it->second < 3*fBgoPed.at(it->first).at(1)){
+      eraseIDs.push_back(it->first);
     }
   }
-  for(std::vector<double>::iterator it = fEvtPsd->fADC.begin(); it != fEvtPsd->fADC.end();){
-    int index = it - fEvtPsd->fADC.begin();
-    short gid = fEvtPsd->fGlobalDynodeID.at(index);
-    fEvtPsd->fADC[index] -= fPsdPed.at(gid).at(0);
-    if(fEvtPsd->fADC[index] < 3*fPsdPed.at(gid).at(1)){
-      it = fEvtPsd->fADC.erase(it);
-      fEvtPsd->fGlobalDynodeID.erase(fEvtPsd->fGlobalDynodeID.begin() + index);
-    }else{
-      ++it;
+  for(short i=0;i<eraseIDs.size();++i){
+    fEvtBgo->fADC.erase(eraseIDs.at(i));
+  }
+  eraseIDs.clear();
+  for(std::map<short,double>::iterator it=fEvtPsd->fADC.begin();it != fEvtPsd->fADC.end();++it){
+    it->second -= fPsdPed.at(it->first).at(0);
+    if(it->second < 3*fPsdPed.at(it->first).at(1)){
+      eraseIDs.push_back(it->first);
     }
   }
-  for(std::vector<double>::iterator it = fEvtNud->fADC.begin(); it != fEvtNud->fADC.end();){
-    int index = it - fEvtNud->fADC.begin();
-    short gid = fEvtNud->fChannelID.at(index);
-    fEvtNud->fADC[index] -= fNudPed.at(gid).at(0);
-    if(fEvtNud->fADC[index] < 3*fNudPed.at(gid).at(1)){
-      it = fEvtNud->fADC.erase(it);
-      fEvtNud->fChannelID.erase(fEvtNud->fChannelID.begin() + index);
-    }else{
-      ++it;
-    }
+  for(short i=0;i<eraseIDs.size();++i){
+    fEvtPsd->fADC.erase(eraseIDs.at(i));
+  }
+  for(short i=0;i<4;++i){
+    fEvtNud->fADC[i] -= fNudPed.at(i).at(0);
   }
   bool procesSTK = SubPed_Stk();
   return true && procesSTK;
