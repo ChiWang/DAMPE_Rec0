@@ -1,6 +1,6 @@
 #! /usr/bin/python
 '''
- *  $Id: JobOpt_RawSignal_fromRoot, 2015-03-07 17:55:33 DAMPE $
+ *  $Id: JobOpt_RawSignal_fromRoot, 2015-04-24 13:32:12 DAMPE $
  *  Author(s):
  *    Chi WANG (chiwang@mail.ustc.edu.cn) 11/03/2014
 #-------------------------------------------------------------------
@@ -10,7 +10,7 @@
 #-------------------------------------------------------------------
 import os
 import DMPSW                    # Load DAMPE software
-import libDmpRec0_RawSignal as DmpRec0
+import libDmpRec0 as DmpRec0
 
 #-------------------------------------------------------------------
 # Global setting
@@ -26,14 +26,16 @@ import libDmpRec0_RawSignal as DmpRec0
 #inputFileName = "./A2Data00_20141117_135210-Rdc.root"
 inputFileName = "./A2Data00_20141118_214521-Rdc.root"
 DMPSW.RootIOSvc.SetInputFile(inputFileName)
-#DMPSW.RootIOSvc.SetOutputFile("./Dmptest15.root")
+DMPSW.RootIOSvc.SetOutputFile("./Dmptest15.root")
 DMPSW.RootIOSvc.SetWriteList("Event/Rec0")  # split by ;
 #DMPSW.RootIOSvc.OutputPath(os.environ["DMPSWWORK"]+"/run/data/cal/ped")
 
 #-------------------------------------------------------------------
 # Creat user's service or algorithm
-Rec0 = DmpRec0.DmpAlgRec0_RawSignal()
+Rec0 = DmpRec0.DmpAlgRec0_SubPed()
 DMPSW.AlgMgr.Append(Rec0)
+Rec0_1 = DmpRec0.DmpAlgRec0_RelationCheck()
+DMPSW.AlgMgr.Append(Rec0_1)
 
 def findPedFile(path,ID,ref_time):
         ped_time="0"
@@ -57,6 +59,7 @@ pedPath ="/home/chi/dmpwork/MyData/Calibration/DAMPE/Pedestal/"
 for iD in ["Bgo","Psd","Stk","Nud"]:
         pedf = findPedFile(pedPath,iD,inf_time)
         Rec0.SetPedestalFile(iD,pedPath+pedf)
+        #Rec0_1.SetPedestalFile(iD,pedPath+pedf)
 
 #-------------------------------------------------------------------
 # Run job

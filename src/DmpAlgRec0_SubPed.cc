@@ -1,5 +1,5 @@
 /*
- *  $Id: DmpAlgRec0_RawSignal.cc, 2015-03-02 20:59:37 DAMPE $
+ *  $Id: DmpAlgRec0_SubPed.cc, 2015-04-24 10:19:11 DAMPE $
  *  Author(s):
  *    Chi WANG (chiwang@mail.ustc.edu.cn) 19/07/2014
 */
@@ -8,16 +8,20 @@
 #include <stdlib.h>     // getenv()
 #include <boost/lexical_cast.hpp>
 //#include <fstream>
+//#include "TH2D.h"
+#include "TMath.h"
 
 #include "DmpEvtBgoRaw.h"
 #include "DmpEvtNudRaw.h"
 #include "DmpDataBuffer.h"
+//#include "DmpBgoBase.h"
+//#include "DmpPsdBase.h"
 #include "DmpCore.h"
-#include "DmpAlgRec0_RawSignal.h"
+#include "DmpAlgRec0_SubPed.h"
 
 //-------------------------------------------------------------------
-DmpAlgRec0_RawSignal::DmpAlgRec0_RawSignal()
- :DmpVAlg("DmpAlgRec0_RawSignal"),
+DmpAlgRec0_SubPed::DmpAlgRec0_SubPed()
+ :DmpVAlg("DmpAlgRec0_SubPed"),
   fEvtBgo(0),
   fEvtPsd(0),
   fEvtNud(0),
@@ -32,29 +36,31 @@ DmpAlgRec0_RawSignal::DmpAlgRec0_RawSignal()
 }
 
 //-------------------------------------------------------------------
-DmpAlgRec0_RawSignal::~DmpAlgRec0_RawSignal(){
+DmpAlgRec0_SubPed::~DmpAlgRec0_SubPed(){
 }
 
-void DmpAlgRec0_RawSignal::SetPedestalFile(std::string Id,std::string f)
+void DmpAlgRec0_SubPed::SetPedestalFile(std::string ID,std::string f)
 {
         TString xx = f;
         if(not xx.Contains(".ped")){
-                DmpLogWarning<<f<<"("<<Id<<") is not a pedestal file... will use the defaur one"<<DmpLogEndl;
+                DmpLogWarning<<f<<"("<<ID<<") is not a pedestal file... will use the defaur one"<<DmpLogEndl;
                 return;
         }
-  if(Id == "Bgo" || Id == "BGO"){
+  TString Id = ID;
+  Id.ToUpper();
+  if(Id == "BGO"){
     gCore->GetJobOption()->SetOption(this->Name()+"/BgoPedestal",f);
-  }else if(Id == "Psd" || Id == "PSD"){
+  }else if(Id == "PSD"){
     gCore->GetJobOption()->SetOption(this->Name()+"/PsdPedestal",f);
-  }else if(Id == "Nud" || Id == "Nud"){
+  }else if(Id == "Nud"){
     gCore->GetJobOption()->SetOption(this->Name()+"/NudPedestal",f);
-  }else if(Id == "Stk" || Id == "Stk"){
+  }else if(Id == "Stk"){
     gCore->GetJobOption()->SetOption(this->Name()+"/StkPedestal",f);
   }
 }
 
 //-------------------------------------------------------------------
-bool DmpAlgRec0_RawSignal::Initialize(){
+bool DmpAlgRec0_SubPed::Initialize(){
   // read input data
   std::string path_i = "Event/Rdc";
   fEvtBgo = dynamic_cast<DmpEvtBgoRaw*>(gDataBuffer->ReadObject(path_i+"/Bgo"));
@@ -78,79 +84,93 @@ bool DmpAlgRec0_RawSignal::Initialize(){
   gDataBuffer->RegisterObject(path_o+"/Nud",fEvtNud);
   DmpParameterSteering steering;
   std::string inputFile = gCore->GetJobOption()->GetValue(this->Name()+"/BgoPedestal");
-  bool loadPed = DAMPE::Bgo::LoadPedestal(inputFile,fBgoPed,steering);
+  bool loadPed = DAMPE::LoadParameters(inputFile,fBgoPed,steering);
   if(not loadPed){
           return false;
   }else{
     gCore->GetJobOption()->SetOption(this->Name()+"/BgoPedestal/t0",steering["StartTime"]);
     gCore->GetJobOption()->SetOption(this->Name()+"/BgoPedestal/t1",steering["StopTime"]);
   }
+  
   inputFile = gCore->GetJobOption()->GetValue(this->Name()+"/PsdPedestal");
-  steering.clear();
-  loadPed = DAMPE::Psd::LoadPedestal(inputFile,fPsdPed,steering);
+  loadPed = DAMPE::LoadParameters(inputFile,fPsdPed,steering);
   if(not loadPed){
           return false;
   }else{
     gCore->GetJobOption()->SetOption(this->Name()+"/PsdPedestal/t0",steering["StartTime"]);
     gCore->GetJobOption()->SetOption(this->Name()+"/PsdPedestal/t1",steering["StopTime"]);
   }
+
   inputFile = gCore->GetJobOption()->GetValue(this->Name()+"/StkPedestal");
-  steering.clear();
-  loadPed = DAMPE::Stk::LoadPedestal(inputFile,fStkPed,steering);
+  loadPed = DAMPE::LoadParameters(inputFile,fStkPed,steering);
   if(not loadPed){
           return false;
   }else{
     gCore->GetJobOption()->SetOption(this->Name()+"/StkPedestal/t0",steering["StartTime"]);
     gCore->GetJobOption()->SetOption(this->Name()+"/StkPedestal/t1",steering["StopTime"]);
   }
+
   inputFile = gCore->GetJobOption()->GetValue(this->Name()+"/NudPedestal");
-  steering.clear();
-  loadPed = DAMPE::Nud::LoadPedestal(inputFile,fNudPed,steering);
+  loadPed = DAMPE::LoadParameters(inputFile,fNudPed,steering);
   if(not loadPed){
           return false;
   }else{
     gCore->GetJobOption()->SetOption(this->Name()+"/NudPedestal/t0",steering["StartTime"]);
     gCore->GetJobOption()->SetOption(this->Name()+"/NudPedestal/t1",steering["StopTime"]);
   }
+
   return true;
 }
 
-bool DmpAlgRec0_RawSignal::SubPed_Stk()
+bool DmpAlgRec0_SubPed::SubPed_Stk()
 {
 return true;
 }
 
 //-------------------------------------------------------------------
-bool DmpAlgRec0_RawSignal::ProcessThisEvent(){
+bool DmpAlgRec0_SubPed::ProcessThisEvent()
+{
   std::vector<short>   eraseIDs;
+  // for BGO
   for(std::map<short,double>::iterator it=fEvtBgo->fADC.begin();it != fEvtBgo->fADC.end();++it){
-    it->second -= fBgoPed.at(it->first).at(0);
-    if(it->second < 3*fBgoPed.at(it->first).at(1)){
+    it->second -= fBgoPed.at(it->first).at(4);
+    if(it->second < 3*fBgoPed.at(it->first).at(5)){
       eraseIDs.push_back(it->first);
     }
   }
   for(short i=0;i<eraseIDs.size();++i){
     fEvtBgo->fADC.erase(eraseIDs.at(i));
   }
+
+  // PSD
   eraseIDs.clear();
   for(std::map<short,double>::iterator it=fEvtPsd->fADC.begin();it != fEvtPsd->fADC.end();++it){
-    it->second -= fPsdPed.at(it->first).at(0);
-    if(it->second < 3*fPsdPed.at(it->first).at(1)){
+    it->second -= fPsdPed.at(it->first).at(4);
+    if(it->second < 3*fPsdPed.at(it->first).at(5)){
       eraseIDs.push_back(it->first);
     }
   }
   for(short i=0;i<eraseIDs.size();++i){
     fEvtPsd->fADC.erase(eraseIDs.at(i));
   }
+
+  // NUD
   for(short i=0;i<4;++i){
     fEvtNud->fADC[i] -= fNudPed.at(i).at(0);
+    if(fEvtNud->fADC[i] < 3*fNudPed.at(i).at(1)){
+      fEvtNud->fADC[i] = 0;
+    }
   }
+  // STK
   bool procesSTK = SubPed_Stk();
+
+  // check current 8 affected by last event... if affected, delete it
+
   return true && procesSTK;
 }
 
 //-------------------------------------------------------------------
-bool DmpAlgRec0_RawSignal::Finalize(){
+bool DmpAlgRec0_SubPed::Finalize(){
   return true;
 }
 

@@ -1,12 +1,13 @@
 /*
- *  $Id: DmpAlgRec0_RawSignal.h, 2015-03-02 20:58:00 DAMPE $
+ *  $Id: DmpAlgRec0_SubPed.h, 2015-04-24 10:17:44 DAMPE $
  *  Author(s):
  *    Chi WANG (chiwang@mail.ustc.edu.cn) 19/07/2014
 */
 
-#ifndef DmpAlgRec0_RawSignal_H
-#define DmpAlgRec0_RawSignal_H
+#ifndef DmpAlgRec0_SubPed_H
+#define DmpAlgRec0_SubPed_H
 
+#include <map>
 #include "DmpLoadParameters.h"
 #include "DmpEvtPsdRaw.h"
 
@@ -14,14 +15,14 @@
 class DmpEvtStkRaw;
 class DmpEvtNudRaw;
 
-class DmpAlgRec0_RawSignal : public DmpVAlg{
+class DmpAlgRec0_SubPed : public DmpVAlg{
 /*
- *  DmpAlgRec0_RawSignal
+ *  DmpAlgRec0_SubPed
  *
  */
 public:
-  DmpAlgRec0_RawSignal();
-  ~DmpAlgRec0_RawSignal();
+  DmpAlgRec0_SubPed();
+  ~DmpAlgRec0_SubPed();
 
   void SetPedestalFile(std::string detectorID,std::string filename);
   bool Initialize();
