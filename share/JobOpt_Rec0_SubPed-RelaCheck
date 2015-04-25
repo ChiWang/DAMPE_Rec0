@@ -1,6 +1,6 @@
 #! /usr/bin/python
 '''
- *  $Id: JobOpt_RawSignal_fromRoot, 2015-04-24 13:32:12 DAMPE $
+ *  $Id: JobOpt_Rec0_SubPed-RelaCheck, 2015-04-25 10:57:01 DAMPE $
  *  Author(s):
  *    Chi WANG (chiwang@mail.ustc.edu.cn) 11/03/2014
 #-------------------------------------------------------------------
@@ -26,7 +26,7 @@ import libDmpRec0 as DmpRec0
 #inputFileName = "./A2Data00_20141117_135210-Rdc.root"
 inputFileName = "./A2Data00_20141118_214521-Rdc.root"
 DMPSW.RootIOSvc.SetInputFile(inputFileName)
-DMPSW.RootIOSvc.SetOutputFile("./Dmptest15.root")
+DMPSW.RootIOSvc.SetOutputFile("./Dmptest15_allRatio.root")
 DMPSW.RootIOSvc.SetWriteList("Event/Rec0")  # split by ;
 #DMPSW.RootIOSvc.OutputPath(os.environ["DMPSWWORK"]+"/run/data/cal/ped")
 
@@ -36,6 +36,8 @@ Rec0 = DmpRec0.DmpAlgRec0_SubPed()
 DMPSW.AlgMgr.Append(Rec0)
 Rec0_1 = DmpRec0.DmpAlgRec0_RelationCheck()
 DMPSW.AlgMgr.Append(Rec0_1)
+Quality = DmpRec0.DmpAlgRec0_DataQuality()
+DMPSW.AlgMgr.Append(Quality)
 
 def findPedFile(path,ID,ref_time):
         ped_time="0"

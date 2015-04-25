@@ -16,7 +16,7 @@
 #include "DmpPsdBase.h"
 #include "DmpCore.h"
 #include "DmpAlgRec0_RelationCheck.h"
-#define LastBigADC  7000
+//#define LastBigADC  2000
 
 //-------------------------------------------------------------------
 DmpAlgRec0_RelationCheck::DmpAlgRec0_RelationCheck()
@@ -134,6 +134,7 @@ bool DmpAlgRec0_RelationCheck::Initialize()
           short gid_b = DmpBgoBase::ConstructGlobalDynodeID(l,b,s,(d+1)*3+2);
           //std::cout<<"DEBUG: "<<__FILE__<<"("<<__LINE__<<")\tl="<<l<<"\tb ="<<b<<"\ts="<<s<<"\td="<<d<<"\t\tped size ="<<fBgoPed[gid_s].size()<<"\t\t"<<fBgoPed[gid_b].size()<<"\t\t"<<fBgoRel[gid_s].size()<<std::endl;
           fTotSigmaBgo[gid_s] = TMath::Sqrt(TMath::Power(fBgoPed[gid_s].at(5),2) + TMath::Power(fBgoPed[gid_b].at(5)*fBgoRel[gid_s].at(5),2));
+          //fTotSigmaBgo[gid_s] = TMath::Sqrt(TMath::Power(fBgoPed[gid_s].at(5),2) + TMath::Power(fBgoPed[gid_b].at(5)*fBgoRel[gid_s].at(5),2) + TMath::Power(fBgoRel[gid_s].at(4)/2,2));
         }
       }
     }
@@ -179,15 +180,18 @@ bool DmpAlgRec0_RelationCheck::ProcessThisEvent()
           if(sign[s][dy+1] < 10 * fBgoPed[gid[s][dy+1]].at(5)) continue;    // must bigger than 10 *sigma
           double deltaADC_small = sign[s][dy+1]*fBgoRel[gid[s][dy]].at(5) + fBgoRel[gid[s][dy]].at(4)  - sign[s][dy];
           bool comp = TMath::Abs(deltaADC_small) > 3*fTotSigmaBgo.at(gid[s][dy]); // affected by last event
-          bool lastBigEvt = false;
+          //bool lastBigEvt = false;
+          /*
           if(_fLastEvtBgo->fADC.find(gid[s][dy+1]) != _fLastEvtBgo->fADC.end()){
             if(_fLastEvtBgo->fADC.at(gid[s][dy+1]) > LastBigADC){ // last big event
               lastBigEvt = true;
             }
           }
-          if(comp && lastBigEvt){
+          */
+          if(comp){
+          //if(comp && lastBigEvt){
             fEvtBgo->fADC.erase(gid[s][dy+1]);
-            std::cout<<"DEBUG: pileup"<<__FILE__<<"("<<__LINE__<<")\tl="<<l<<"\tb="<<b<<"\ts="<<s<<"\td="<<dy<<"\t\tdelte = "<<comp<<std::endl;
+            DmpLogWarning<<"Bgo pileup"<<__FILE__<<"("<<__LINE__<<")\tl="<<l<<"\tb="<<b<<"\ts="<<s<<"\td="<<dy<<"\t\tdelte = "<<comp<<std::endl;
           }
         }
       }
@@ -220,15 +224,18 @@ bool DmpAlgRec0_RelationCheck::ProcessThisEvent()
           if(signP[s][1] < 10* fPsdPed[gidP[s][1]].at(5)) continue;    // must bigger than 10 *sigma
           double deltaADC_small = signP[s][1]*fPsdRel[gidP[s][0]].at(5) + fPsdRel[gidP[s][0]].at(4)  - signP[s][0];
           bool comp = TMath::Abs(deltaADC_small) > 3*fTotSigmaPsd.at(gidP[s][0]); // affected by last event
-          bool lastBigEvt = false;
+          //bool lastBigEvt = false;
+          /*
           if(_fLastEvtPsd->fADC.find(gidP[s][1]) != _fLastEvtPsd->fADC.end()){
             if(_fLastEvtPsd->fADC.at(gidP[s][1]) > LastBigADC){ // last big event
               lastBigEvt = true;
             }
           }
-          if(comp && lastBigEvt){
+          */
+          if(comp){
+          //if(comp && lastBigEvt){
             fEvtPsd->fADC.erase(gidP[s][1]);
-            std::cout<<"DEBUG: pileup"<<__FILE__<<"("<<__LINE__<<")\tl="<<l<<"\tb="<<b<<"\ts="<<s<<"\t\tdelte = "<<comp<<std::endl;
+            DmpLogWarning<<"Psd pileup"<<__FILE__<<"("<<__LINE__<<")\tl="<<l<<"\tb="<<b<<"\ts="<<s<<"\t\tdelte = "<<comp<<std::endl;
           }
       }
     }

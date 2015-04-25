@@ -1,5 +1,5 @@
 /*
- *  $Id: DmpAlgRec0_DataQuality.h, 2015-04-24 13:24:09 DAMPE $
+ *  $Id: DmpAlgRec0_DataQuality.h, 2015-04-25 07:52:06 DAMPE $
  *  Author(s):
  *    Chi WANG (chiwang@mail.ustc.edu.cn) 19/07/2014
 */
@@ -12,6 +12,7 @@
 #include "DmpEvtPsdRaw.h"
 
 #include "DmpVAlg.h"
+class TH2D;
 
 class DmpAlgRec0_DataQuality : public DmpVAlg{
 /*
@@ -28,13 +29,15 @@ public:
   bool ProcessThisEvent();
   bool Finalize();
 
-private:    // output
+private:    // input
   DmpEvtBgoRaw          *fEvtBgo;
   DmpEvtPsdRaw          *fEvtPsd;
 
 private:
   DmpEvtBgoRaw          *_fLastEvtBgo;
   DmpEvtPsdRaw          *_fLastEvtPsd;
+  std::map<short, std::map<short,std::map<short, std::map<short,TH2D*> > > >  fHistBgo;
+  std::map<short, std::map<short,std::map<short, TH2D* > > >  fHistPsd;
 
 private:
   DmpParameterHolder    fBgoPed; 
@@ -42,8 +45,6 @@ private:
 
   DmpParameterHolder    fBgoRel; 
   DmpParameterHolder    fPsdRel; 
-  std::map<short,double>  fTotSigmaBgo;
-  std::map<short,double>  fTotSigmaPsd;
 };
 
 #endif

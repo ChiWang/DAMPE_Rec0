@@ -20,6 +20,7 @@ BOOST_PYTHON_MODULE(libDmpRec0){
      .def("SetRelationFile",    &DmpAlgRec0_RelationCheck::SetRelationFile)
      ;
   class_<DmpAlgRec0_DataQuality,boost::noncopyable,bases<DmpVAlg> >("DmpAlgRec0_DataQuality",init<>())
+     .def("SetPedestalFile",    &DmpAlgRec0_DataQuality::SetPedestalFile)
      .def("SetRelationFile",    &DmpAlgRec0_DataQuality::SetRelationFile)
      ;
 
