@@ -1,6 +1,6 @@
 #! /usr/bin/python
 '''
- *  $Id: JobOpt_Rec0_SubPed-RelaCheck, 2015-04-25 10:57:01 DAMPE $
+ *  $Id: JobOpt_Rec0_Signal, 2015-04-28 13:31:09 DAMPE $
  *  Author(s):
  *    Chi WANG (chiwang@mail.ustc.edu.cn) 11/03/2014
 #-------------------------------------------------------------------
@@ -9,6 +9,7 @@
 
 #-------------------------------------------------------------------
 import os
+import sys
 import DMPSW                    # Load DAMPE software
 import libDmpRec0 as DmpRec0
 
@@ -23,19 +24,20 @@ import libDmpRec0 as DmpRec0
 #-------------------------------------------------------------------
 # RootIOSvc options
 #DMPSW.RootIOSvc.InputPath(os.environ["DMPSWWORK"]+"/data/sci")
-#inputFileName = "./A2Data00_20141117_135210-Rdc.root"
 inputFileName = "./A2Data00_20141118_214521-Rdc.root"
+if len(sys.argv) == 2:
+        inputFileName = sys.argv[1]
+print inputFileName
+exit
 DMPSW.RootIOSvc.SetInputFile(inputFileName)
-DMPSW.RootIOSvc.SetOutputFile("./Dmptest15_allRatio.root")
+#DMPSW.RootIOSvc.SetOutputFile("./Dmptest15.root")
 DMPSW.RootIOSvc.SetWriteList("Event/Rec0")  # split by ;
 #DMPSW.RootIOSvc.OutputPath(os.environ["DMPSWWORK"]+"/run/data/cal/ped")
 
 #-------------------------------------------------------------------
 # Creat user's service or algorithm
-Rec0 = DmpRec0.DmpAlgRec0_SubPed()
+Rec0 = DmpRec0.DmpAlgRec0_Signal()
 DMPSW.AlgMgr.Append(Rec0)
-Rec0_1 = DmpRec0.DmpAlgRec0_RelationCheck()
-DMPSW.AlgMgr.Append(Rec0_1)
 Quality = DmpRec0.DmpAlgRec0_DataQuality()
 DMPSW.AlgMgr.Append(Quality)
 
@@ -61,7 +63,6 @@ pedPath ="/home/chi/dmpwork/MyData/Calibration/DAMPE/Pedestal/"
 for iD in ["Bgo","Psd","Stk","Nud"]:
         pedf = findPedFile(pedPath,iD,inf_time)
         Rec0.SetPedestalFile(iD,pedPath+pedf)
-        #Rec0_1.SetPedestalFile(iD,pedPath+pedf)
 
 #-------------------------------------------------------------------
 # Run job

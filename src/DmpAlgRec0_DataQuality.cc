@@ -27,7 +27,7 @@ DmpAlgRec0_DataQuality::DmpAlgRec0_DataQuality()
   _fLastEvtBgo(0),
   _fLastEvtPsd(0)
 {
-  gRootIOSvc->SetOutFileKey("LastAffect");
+  //gRootIOSvc->SetOutFileKey("LastAffect");
   //std::string histFileName = gRootIOSvc->GetOutputPath()+gRootIOSvc->GetInputStem()+"_LastAffectCheck.root";
   std::string root_path = (std::string)getenv("DMPSWSYS")+"/share/Calibration";
   gCore->GetJobOption()->SetOption(this->Name()+"/BgoPedestal",root_path+"/Bgo.ped");

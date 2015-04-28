@@ -1,27 +1,23 @@
 /*
- *  $Id: DmpAlgRec0_SubPed.cc, 2015-04-24 10:19:11 DAMPE $
+ *  $Id: DmpAlgRec0_Signal.cc, 2015-04-28 13:27:23 DAMPE $
  *  Author(s):
  *    Chi WANG (chiwang@mail.ustc.edu.cn) 19/07/2014
 */
 
-//#include <stdio.h>
 #include <stdlib.h>     // getenv()
 #include <boost/lexical_cast.hpp>
-//#include <fstream>
-//#include "TH2D.h"
 #include "TMath.h"
 
 #include "DmpEvtBgoRaw.h"
 #include "DmpEvtNudRaw.h"
 #include "DmpDataBuffer.h"
-//#include "DmpBgoBase.h"
-//#include "DmpPsdBase.h"
 #include "DmpCore.h"
-#include "DmpAlgRec0_SubPed.h"
+#include "DmpAlgRec0_Signal.h"
+#define Overflow  14000
 
 //-------------------------------------------------------------------
-DmpAlgRec0_SubPed::DmpAlgRec0_SubPed()
- :DmpVAlg("DmpAlgRec0_SubPed"),
+DmpAlgRec0_Signal::DmpAlgRec0_Signal()
+ :DmpVAlg("DmpAlgRec0_Signal"),
   fEvtBgo(0),
   fEvtPsd(0),
   fEvtNud(0),
@@ -36,10 +32,10 @@ DmpAlgRec0_SubPed::DmpAlgRec0_SubPed()
 }
 
 //-------------------------------------------------------------------
-DmpAlgRec0_SubPed::~DmpAlgRec0_SubPed(){
+DmpAlgRec0_Signal::~DmpAlgRec0_Signal(){
 }
 
-void DmpAlgRec0_SubPed::SetPedestalFile(std::string ID,std::string f)
+void DmpAlgRec0_Signal::SetPedestalFile(std::string ID,std::string f)
 {
         TString xx = f;
         if(not xx.Contains(".ped")){
@@ -60,7 +56,7 @@ void DmpAlgRec0_SubPed::SetPedestalFile(std::string ID,std::string f)
 }
 
 //-------------------------------------------------------------------
-bool DmpAlgRec0_SubPed::Initialize(){
+bool DmpAlgRec0_Signal::Initialize(){
   // read input data
   std::string path_i = "Event/Rdc";
   fEvtBgo = dynamic_cast<DmpEvtBgoRaw*>(gDataBuffer->ReadObject(path_i+"/Bgo"));
@@ -122,19 +118,19 @@ bool DmpAlgRec0_SubPed::Initialize(){
   return true;
 }
 
-bool DmpAlgRec0_SubPed::SubPed_Stk()
+bool DmpAlgRec0_Signal::Signal_Stk()
 {
 return true;
 }
 
 //-------------------------------------------------------------------
-bool DmpAlgRec0_SubPed::ProcessThisEvent()
+bool DmpAlgRec0_Signal::ProcessThisEvent()
 {
   std::vector<short>   eraseIDs;
   // for BGO
   for(std::map<short,double>::iterator it=fEvtBgo->fADC.begin();it != fEvtBgo->fADC.end();++it){
     it->second -= fBgoPed.at(it->first).at(4);
-    if(it->second < 3*fBgoPed.at(it->first).at(5)){
+    if(it->second < 3*fBgoPed.at(it->first).at(5) || it->second > Overflow){
       eraseIDs.push_back(it->first);
     }
   }
@@ -146,7 +142,7 @@ bool DmpAlgRec0_SubPed::ProcessThisEvent()
   eraseIDs.clear();
   for(std::map<short,double>::iterator it=fEvtPsd->fADC.begin();it != fEvtPsd->fADC.end();++it){
     it->second -= fPsdPed.at(it->first).at(4);
-    if(it->second < 3*fPsdPed.at(it->first).at(5)){
+    if(it->second < 3*fPsdPed.at(it->first).at(5) || it->second > Overflow){
       eraseIDs.push_back(it->first);
     }
   }
@@ -162,7 +158,7 @@ bool DmpAlgRec0_SubPed::ProcessThisEvent()
     }
   }
   // STK
-  bool procesSTK = SubPed_Stk();
+  bool procesSTK = Signal_Stk();
 
   // check current 8 affected by last event... if affected, delete it
 
@@ -170,7 +166,7 @@ bool DmpAlgRec0_SubPed::ProcessThisEvent()
 }
 
 //-------------------------------------------------------------------
-bool DmpAlgRec0_SubPed::Finalize(){
+bool DmpAlgRec0_Signal::Finalize(){
   return true;
 }
 
