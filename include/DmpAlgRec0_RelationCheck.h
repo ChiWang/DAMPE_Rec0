@@ -33,8 +33,8 @@ private:    // output
   DmpEvtPsdRaw          *fEvtPsd;
 
 private:
-  DmpEvtBgoRaw          *_fLastEvtBgo;
-  DmpEvtPsdRaw          *_fLastEvtPsd;
+  //DmpEvtBgoRaw          *_fLastEvtBgo;
+  //DmpEvtPsdRaw          *_fLastEvtPsd;
 
 private:
   DmpParameterHolder    fBgoPed; 

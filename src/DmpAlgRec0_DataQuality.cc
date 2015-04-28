@@ -130,7 +130,7 @@ bool DmpAlgRec0_DataQuality::Initialize()
     for(short b=0;b<DmpParameterBgo::kBarNo;++b){
       for(short s=0;s<2;++s){
         for(short d=0;d<2;++d){  // only for dy2,5
-          fHistBgo[l][b][s][d] = new TH2D(Form("L%02d_B%02d_S%d_Dy%d",l,b,s,d*3+2),Form("L%02d_B%02d_S%d_Dy%d;delta_Dy%d;last Dy%d",l,b,s,d*3+2,d*3+2,(d+1)*3+2),100,-50,50,2000,0,13000);
+          fHistBgo[l][b][s][d] = new TH2D(Form("Bgo_L%02d_B%02d_S%d_Dy%d",l,b,s,d*3+2),Form("L%02d_B%02d_S%d_Dy%d;delta_Dy%d;last Dy%d",l,b,s,d*3+2,d*3+2,(d+1)*3+2),100,-50,50,2000,0,13000);
         }
       }
     }
@@ -138,7 +138,7 @@ bool DmpAlgRec0_DataQuality::Initialize()
   for(short l=0;l<DmpParameterPsd::kPlaneNo*2;++l){
     for(short b=0;b<DmpParameterPsd::kStripNo;++b){
       for(short s=0;s<2;++s){
-        fHistPsd[l][b][s] = new TH2D(Form("L%02d_B%02d_S%d_Dy5",l,b,s),Form("L%02d_B%02d_S%d_Dy5;delta_Dy5;last Dy8",l,b,s),100,-50,50,2000,0,13000);
+        fHistPsd[l][b][s] = new TH2D(Form("Psd_L%02d_B%02d_S%d_Dy5",l,b,s),Form("L%02d_B%02d_S%d_Dy5;delta_Dy5;last Dy8",l,b,s),100,-50,50,2000,0,13000);
       }
     }
   }
@@ -166,7 +166,7 @@ bool DmpAlgRec0_DataQuality::ProcessThisEvent()
           if(sign[s][dy] < 5 * fBgoPed[gid[s][dy]].at(5)) continue;    // must bigger than 5 *sigma
           if(sign[s][dy+1] < 10 * fBgoPed[gid[s][dy+1]].at(5)) continue;    // must bigger than 10 *sigma
           if(_fLastEvtBgo->fADC.find(gid[s][dy+1]) == _fLastEvtBgo->fADC.end()) continue; // last event exist
-          if(_fLastEvtBgo->fADC.at(gid[s][dy+1] < 5 * fBgoPed(gid[s][dy+1]).at(5))) continue;
+          if(_fLastEvtBgo->fADC.at(gid[s][dy+1]) < 5 * fBgoPed[gid[s][dy+1]].at(5)) continue;
           double deltaADC_small = sign[s][dy+1]*fBgoRel[gid[s][dy]].at(5) + fBgoRel[gid[s][dy]].at(4)  - sign[s][dy];
           fHistBgo[l][b][s][dy]->Fill(deltaADC_small,_fLastEvtBgo->fADC.at(gid[s][dy+1]));
         }
@@ -192,7 +192,7 @@ bool DmpAlgRec0_DataQuality::ProcessThisEvent()
         if(signP[s][0] < 5 * fPsdPed[gidP[s][0]].at(5)) continue;    // must bigger than 5 *sigma
         if(signP[s][1] < 10* fPsdPed[gidP[s][1]].at(5)) continue;    // must bigger than 10 *sigma
         if(_fLastEvtPsd->fADC.find(gidP[s][1]) == _fLastEvtPsd->fADC.end()) continue; // last event exist
-        if(_fLastEvtPsd->fADC.at(gidP[s][1] < 5 * fPsdPed(gidP[s][1]).at(5))) continue;
+        if(_fLastEvtPsd->fADC.at(gidP[s][1]) < 5 * fPsdPed[gidP[s][1]].at(5)) continue;
         double deltaADC_small = signP[s][1]*fPsdRel[gidP[s][0]].at(5) + fPsdRel[gidP[s][0]].at(4)  - signP[s][0];
           //std::cout<<"DEBUG: pileup"<<__FILE__<<"("<<__LINE__<<")\tl="<<l<<"\tb="<<b<<"\ts="<<s<<"\t\tdelte = "<<comp<<std::endl;
         fHistPsd[l][b][s]->Fill(deltaADC_small,_fLastEvtPsd->fADC.at(gidP[s][1]));
@@ -204,7 +204,8 @@ bool DmpAlgRec0_DataQuality::ProcessThisEvent()
 }
 
 //-------------------------------------------------------------------
-bool DmpAlgRec0_DataQuality::Finalize(){
+bool DmpAlgRec0_DataQuality::Finalize()
+{
   //std::string histFileName = gRootIOSvc->GetOutputPath()+gRootIOSvc->GetInputStem()+"_LastAffectCheck.root";
   TFile *histFile = gRootIOSvc->GetOutputRootFile();//new TFile(histFileName.c_str(),"RECREATE");
   histFile->mkdir("Bgo");
@@ -224,7 +225,6 @@ bool DmpAlgRec0_DataQuality::Finalize(){
 
   histFile->mkdir("Psd");
   histFile->cd("Psd");
-  std::cout<<"DEBUG: "<<__FILE__<<"("<<__LINE__<<")"<<std::endl;
   for(short l=0;l<DmpParameterPsd::kPlaneNo*2;++l){
     for(short b=0;b<DmpParameterPsd::kStripNo;++b){
       for(short s=0;s<2;++s){
@@ -235,7 +235,6 @@ bool DmpAlgRec0_DataQuality::Finalize(){
       }
     }
   }
-  std::cout<<"DEBUG: "<<__FILE__<<"("<<__LINE__<<")"<<std::endl;
 
   //histFile->Save();
   //delete histFile;

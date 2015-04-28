@@ -22,9 +22,9 @@
 DmpAlgRec0_RelationCheck::DmpAlgRec0_RelationCheck()
  :DmpVAlg("DmpAlgRec0_RelationCheck"),
   fEvtBgo(0),
-  fEvtPsd(0),
-  _fLastEvtBgo(0),
-  _fLastEvtPsd(0)
+  fEvtPsd(0)
+  //_fLastEvtBgo(0),
+  //_fLastEvtPsd(0)
 {
   gRootIOSvc->SetOutFileKey("Rec0");
   std::string root_path = (std::string)getenv("DMPSWSYS")+"/share/Calibration";
@@ -32,14 +32,14 @@ DmpAlgRec0_RelationCheck::DmpAlgRec0_RelationCheck()
   gCore->GetJobOption()->SetOption(this->Name()+"/PsdPedestal",root_path+"/Psd.ped");
   gCore->GetJobOption()->SetOption(this->Name()+"/BgoRelation",root_path+"/Bgo.rel");
   gCore->GetJobOption()->SetOption(this->Name()+"/PsdRelation",root_path+"/Psd.rel");
-  _fLastEvtBgo = new  DmpEvtBgoRaw();
-  _fLastEvtPsd = new  DmpEvtPsdRaw();
+  //_fLastEvtBgo = new  DmpEvtBgoRaw();
+  //_fLastEvtPsd = new  DmpEvtPsdRaw();
 }
 
 //-------------------------------------------------------------------
 DmpAlgRec0_RelationCheck::~DmpAlgRec0_RelationCheck(){
-        delete _fLastEvtBgo;
-        delete _fLastEvtPsd;
+        //delete _fLastEvtBgo;
+        //delete _fLastEvtPsd;
 }
 
 void DmpAlgRec0_RelationCheck::SetPedestalFile(std::string ID,std::string f)
@@ -197,7 +197,7 @@ bool DmpAlgRec0_RelationCheck::ProcessThisEvent()
       }
     }
   }
-  _fLastEvtBgo->LoadFrom(fEvtBgo);
+  //_fLastEvtBgo->LoadFrom(fEvtBgo);
 
   // PSD relation check
   short gidP[2][2]; //  side0,1;  5,8;
@@ -240,7 +240,7 @@ bool DmpAlgRec0_RelationCheck::ProcessThisEvent()
       }
     }
   }
-  _fLastEvtPsd->LoadFrom(fEvtPsd);
+  //_fLastEvtPsd->LoadFrom(fEvtPsd);
   return true;
 }
 
