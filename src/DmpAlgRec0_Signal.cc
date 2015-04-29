@@ -129,8 +129,8 @@ bool DmpAlgRec0_Signal::ProcessThisEvent()
   std::vector<short>   eraseIDs;
   // for BGO
   for(std::map<short,double>::iterator it=fEvtBgo->fADC.begin();it != fEvtBgo->fADC.end();++it){
-    it->second -= fBgoPed.at(it->first).at(4);
-    if(it->second < 3*fBgoPed.at(it->first).at(5) || it->second > Overflow){
+    it->second -= fBgoPed.at(it->first).at(0);
+    if(it->second < 3*fBgoPed.at(it->first).at(1) || it->second > Overflow){
       eraseIDs.push_back(it->first);
     }
   }
@@ -141,8 +141,8 @@ bool DmpAlgRec0_Signal::ProcessThisEvent()
   // PSD
   eraseIDs.clear();
   for(std::map<short,double>::iterator it=fEvtPsd->fADC.begin();it != fEvtPsd->fADC.end();++it){
-    it->second -= fPsdPed.at(it->first).at(4);
-    if(it->second < 3*fPsdPed.at(it->first).at(5) || it->second > Overflow){
+    it->second -= fPsdPed.at(it->first).at(0);
+    if(it->second < 3*fPsdPed.at(it->first).at(1) || it->second > Overflow){
       eraseIDs.push_back(it->first);
     }
   }
