@@ -27,8 +27,6 @@ import libDmpRec0 as DmpRec0
 inputFileName = "./A2Data00_20141118_214521-Rdc.root"
 if len(sys.argv) == 2:
         inputFileName = sys.argv[1]
-print inputFileName
-exit
 DMPSW.RootIOSvc.SetInputFile(inputFileName)
 #DMPSW.RootIOSvc.SetOutputFile("./Dmptest15.root")
 DMPSW.RootIOSvc.SetWriteList("Event/Rec0")  # split by ;
