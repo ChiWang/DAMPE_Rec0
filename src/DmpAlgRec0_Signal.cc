@@ -13,7 +13,6 @@
 #include "DmpDataBuffer.h"
 #include "DmpCore.h"
 #include "DmpAlgRec0_Signal.h"
-#define Overflow  14000
 
 //-------------------------------------------------------------------
 DmpAlgRec0_Signal::DmpAlgRec0_Signal()
@@ -130,7 +129,7 @@ bool DmpAlgRec0_Signal::ProcessThisEvent()
   // for BGO
   for(std::map<short,double>::iterator it=fEvtBgo->fADC.begin();it != fEvtBgo->fADC.end();++it){
     it->second -= fBgoPed.at(it->first).at(0);
-    if(it->second < 3*fBgoPed.at(it->first).at(1) || it->second > Overflow){
+    if(it->second < 3*fBgoPed.at(it->first).at(1)){
       eraseIDs.push_back(it->first);
     }
   }
@@ -142,7 +141,7 @@ bool DmpAlgRec0_Signal::ProcessThisEvent()
   eraseIDs.clear();
   for(std::map<short,double>::iterator it=fEvtPsd->fADC.begin();it != fEvtPsd->fADC.end();++it){
     it->second -= fPsdPed.at(it->first).at(0);
-    if(it->second < 3*fPsdPed.at(it->first).at(1) || it->second > Overflow){
+    if(it->second < 3*fPsdPed.at(it->first).at(1)){
       eraseIDs.push_back(it->first);
     }
   }

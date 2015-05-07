@@ -18,6 +18,7 @@
 #include "DmpPsdBase.h"
 #include "DmpCore.h"
 #include "DmpAlgRec0_DataQuality.h"
+#define Overflow  14000
 
 //-------------------------------------------------------------------
 DmpAlgRec0_DataQuality::DmpAlgRec0_DataQuality()
@@ -163,11 +164,11 @@ bool DmpAlgRec0_DataQuality::ProcessThisEvent()
           }
         }
         for(short dy=0;dy<2;++dy){ // Fill data
-          if(sign[s][dy] < 5 * fBgoPed[gid[s][dy]].at(5)) continue;    // must bigger than 5 *sigma
-          if(sign[s][dy+1] < 10 * fBgoPed[gid[s][dy+1]].at(5)) continue;    // must bigger than 10 *sigma
+          if(sign[s][dy] < 5 * fBgoPed[gid[s][dy]].at(1)) continue;    // must bigger than 5 *sigma
+          if(sign[s][dy+1] < 10 * fBgoPed[gid[s][dy+1]].at(1) || sign[s][dy+1] > Overflow) continue;    // must bigger than 10 *sigma
           if(_fLastEvtBgo->fADC.find(gid[s][dy+1]) == _fLastEvtBgo->fADC.end()) continue; // last event exist
-          if(_fLastEvtBgo->fADC.at(gid[s][dy+1]) < 5 * fBgoPed[gid[s][dy+1]].at(5)) continue;
-          double deltaADC_small = sign[s][dy+1]*fBgoRel[gid[s][dy]].at(5) + fBgoRel[gid[s][dy]].at(4)  - sign[s][dy];
+          if(_fLastEvtBgo->fADC.at(gid[s][dy+1]) < 5 * fBgoPed[gid[s][dy+1]].at(1)) continue;
+          double deltaADC_small = sign[s][dy+1]*fBgoRel[gid[s][dy]].at(1) + fBgoRel[gid[s][dy]].at(0)  - sign[s][dy];
           fHistBgo[l][b][s][dy]->Fill(deltaADC_small,_fLastEvtBgo->fADC.at(gid[s][dy+1]));
         }
       }
@@ -189,11 +190,11 @@ bool DmpAlgRec0_DataQuality::ProcessThisEvent()
             signP[s][dy] = 0;
           }
         }
-        if(signP[s][0] < 5 * fPsdPed[gidP[s][0]].at(5)) continue;    // must bigger than 5 *sigma
-        if(signP[s][1] < 10* fPsdPed[gidP[s][1]].at(5)) continue;    // must bigger than 10 *sigma
+        if(signP[s][0] < 5 * fPsdPed[gidP[s][0]].at(1)) continue;    // must bigger than 5 *sigma
+        if(signP[s][1] < 10* fPsdPed[gidP[s][1]].at(1) || signP[s][1]>Overflow) continue;    // must bigger than 10 *sigma
         if(_fLastEvtPsd->fADC.find(gidP[s][1]) == _fLastEvtPsd->fADC.end()) continue; // last event exist
-        if(_fLastEvtPsd->fADC.at(gidP[s][1]) < 5 * fPsdPed[gidP[s][1]].at(5)) continue;
-        double deltaADC_small = signP[s][1]*fPsdRel[gidP[s][0]].at(5) + fPsdRel[gidP[s][0]].at(4)  - signP[s][0];
+        if(_fLastEvtPsd->fADC.at(gidP[s][1]) < 5 * fPsdPed[gidP[s][1]].at(1)) continue;
+        double deltaADC_small = signP[s][1]*fPsdRel[gidP[s][0]].at(1) + fPsdRel[gidP[s][0]].at(0)  - signP[s][0];
           //std::cout<<"DEBUG: pileup"<<__FILE__<<"("<<__LINE__<<")\tl="<<l<<"\tb="<<b<<"\ts="<<s<<"\t\tdelte = "<<comp<<std::endl;
         fHistPsd[l][b][s]->Fill(deltaADC_small,_fLastEvtPsd->fADC.at(gidP[s][1]));
       }
